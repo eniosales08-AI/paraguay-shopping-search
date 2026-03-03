@@ -209,10 +209,24 @@ function Resultados({ locale }: { locale: Locale }) {
                 rel="noopener noreferrer"
                 className="block rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-sm hover:shadow-md transition-shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
-                <div className="aspect-square bg-[var(--color-border)] rounded-lg mb-3 overflow-hidden">
+                <div className="aspect-square bg-[var(--color-border)] rounded-lg mb-3 overflow-hidden relative">
                   {p.image_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element -- external product URLs
-                    <img src={p.image_url} alt="" className="w-full h-full object-cover" />
+                    <>
+                      {/* eslint-disable-next-line @next/next/no-img-element -- external product URLs */}
+                      <img
+                        src={p.image_url}
+                        alt=""
+                        className="absolute inset-0 w-full h-full object-cover product-img"
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                          const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                          if (fallback) fallback.classList.remove("hidden");
+                        }}
+                      />
+                      <div className="absolute inset-0 hidden flex items-center justify-center text-[var(--color-text-muted)] text-sm bg-[var(--color-border)]">
+                        {t.sinImagen}
+                      </div>
+                    </>
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-[var(--color-text-muted)] text-sm">
                       {t.sinImagen}
