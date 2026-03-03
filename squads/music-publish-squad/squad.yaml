@@ -1,0 +1,57 @@
+name: music-publish-squad
+version: 1.0.0
+description: "Squad para artistas e músicos — criação de música e publicação multi-plataforma (YouTube, TikTok, Instagram). Congnittusai: empresa de tecnologia para artistas."
+author: "Congnittusai"
+license: MIT
+slashPrefix: mps
+
+aios:
+  minVersion: "2.1.0"
+  type: squad
+
+components:
+  agents:
+    - creative-director.md
+    - music-composer.md
+    - audio-producer.md
+    - mastering-engineer.md
+    - platform-adapter.md
+    - video-editor.md
+    - publisher.md
+    - content-strategist.md
+  tasks:
+    - define-creative-brief.md
+    - compose-track.md
+    - produce-and-mix.md
+    - master-and-export-stems.md
+    - adapt-for-platforms.md
+    - edit-video-for-track.md
+    - plan-content-strategy.md
+    - publish-to-channels.md
+  workflows:
+    - music-creation-to-publish.yaml
+    - platform-adaptation-flow.yaml
+    - publish-and-schedule-flow.yaml
+  checklists: []
+  templates: []
+  tools: []
+  scripts: []
+
+config:
+  extends: none
+  coding-standards: config/coding-standards.md
+  tech-stack: config/tech-stack.md
+  source-tree: config/source-tree.md
+
+dependencies:
+  node: []
+  squads: []
+
+tags:
+  - music
+  - publishing
+  - youtube
+  - tiktok
+  - instagram
+  - aios
+  - multi-agent

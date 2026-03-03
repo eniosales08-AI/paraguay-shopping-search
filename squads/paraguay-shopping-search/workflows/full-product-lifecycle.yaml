@@ -1,0 +1,96 @@
+workflow_name: full_product_lifecycle
+description: "Ciclo completo: visão, dados, busca, API, design e SEO, front-end, deploy, QA"
+
+pattern: "Pipeline + Fan-Out + Converge"
+
+agent_sequence:
+  - product-owner
+  - data-engineer
+  - search-engineer
+  - backend-engineer
+  - ux-designer
+  - seo-specialist
+  - frontend-engineer
+  - devops
+  - qa-engineer
+
+key_commands:
+  - "*define-product-vision"
+  - "*ingest-and-normalize-catalog"
+  - "*build-search-engine"
+  - "*build-backend-api"
+  - "*design-ui-system"
+  - "*plan-seo-localization"
+  - "*implement-frontend"
+  - "*setup-deploy-and-monitor"
+  - "*run-quality-gates"
+
+trigger_threshold: 1
+typical_duration: "horas a dias (conforme escopo)"
+
+success_indicators:
+  - "Visão e compliance documentados"
+  - "Catálogo e busca operacionais"
+  - "API e front-end em deploy"
+  - "Quality report e gate status (go/no-go) gerados"
+
+transitions:
+  vision_complete:
+    trigger: "product vision generated"
+    confidence: 0.90
+    greeting_message: "Visão pronta. Pipeline de dados e design/SEO em paralelo."
+    next_steps:
+      - command: "*ingest-and-normalize-catalog"
+        description: "Ingestão e catálogo"
+        priority: 1
+      - command: "*design-ui-system"
+        description: "Design system"
+        priority: 2
+      - command: "*plan-seo-localization"
+        description: "SEO e localização"
+        priority: 2
+  catalog_complete:
+    trigger: "catalog schema and data ref available"
+    confidence: 0.90
+    greeting_message: "Catálogo pronto. Iniciando motor de busca."
+    next_steps:
+      - command: "*build-search-engine"
+        description: "Motor de busca"
+        priority: 1
+  search_complete:
+    trigger: "search contract and index ref available"
+    confidence: 0.90
+    greeting_message: "Busca pronta. Iniciando API."
+    next_steps:
+      - command: "*build-backend-api"
+        description: "API backend"
+        priority: 1
+  api_and_design_ready:
+    trigger: "API spec available; design system and seo spec available"
+    confidence: 0.90
+    greeting_message: "API, design e SEO prontos. Iniciando front-end."
+    next_steps:
+      - command: "*implement-frontend"
+        description: "Implementa front-end"
+        priority: 1
+  frontend_complete:
+    trigger: "frontend build ref available"
+    confidence: 0.90
+    greeting_message: "Front-end pronto. Deploy e QA."
+    next_steps:
+      - command: "*setup-deploy-and-monitor"
+        description: "Deploy e monitoramento"
+        priority: 1
+  deploy_complete:
+    trigger: "deploy URL available"
+    confidence: 0.95
+    greeting_message: "Deploy pronto. Executando gates de qualidade."
+    next_steps:
+      - command: "*run-quality-gates"
+        description: "Gates de qualidade"
+        priority: 1
+  qa_complete:
+    trigger: "quality report and gate status generated"
+    confidence: 0.95
+    greeting_message: "Pipeline concluído. Verificar quality report para go/no-go."
+    next_steps: []

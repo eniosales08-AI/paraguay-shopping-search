@@ -1,0 +1,59 @@
+name: paraguay-shopping-search
+version: 1.0.0
+description: "Site de buscas de compras do Paraguai. Agregação de dados, busca, API e front-end. Congnittusai."
+author: Congnittusai
+license: MIT
+slashPrefix: pss
+
+aios:
+  minVersion: "2.1.0"
+  type: squad
+
+components:
+  agents:
+    - product-owner.md
+    - data-engineer.md
+    - search-engineer.md
+    - backend-engineer.md
+    - ux-designer.md
+    - frontend-engineer.md
+    - seo-specialist.md
+    - devops.md
+    - qa-engineer.md
+  tasks:
+    - define-product-vision.md
+    - ingest-and-normalize-catalog.md
+    - build-search-engine.md
+    - build-backend-api.md
+    - design-ui-system.md
+    - implement-frontend.md
+    - plan-seo-localization.md
+    - setup-deploy-and-monitor.md
+    - run-quality-gates.md
+  workflows:
+    - data-to-search-to-api.yaml
+    - design-and-seo-to-frontend.yaml
+    - full-product-lifecycle.yaml
+  checklists: []
+  templates: []
+  tools: []
+  scripts: []
+
+config:
+  extends: none
+  coding-standards: config/coding-standards.md
+  tech-stack: config/tech-stack.md
+  source-tree: config/source-tree.md
+
+dependencies:
+  node: []
+  squads: []
+
+tags:
+  - ecommerce
+  - paraguay
+  - shopping
+  - search
+  - aios
+  - multi-agent
+  - congnittusai

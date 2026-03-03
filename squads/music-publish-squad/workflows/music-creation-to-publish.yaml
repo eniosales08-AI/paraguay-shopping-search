@@ -1,0 +1,87 @@
+workflow_name: music_creation_to_publish
+description: "Pipeline principal: brief, composição, produção, master, adaptação/vídeo/estratégia, publicação"
+
+pattern: "Pipeline + Fan-Out + Converge"
+
+agent_sequence:
+  - creative-director
+  - music-composer
+  - audio-producer
+  - mastering-engineer
+  - platform-adapter
+  - video-editor
+  - content-strategist
+  - publisher
+
+key_commands:
+  - "*define-creative-brief"
+  - "*compose-track"
+  - "*produce-and-mix"
+  - "*master-and-export-stems"
+  - "*adapt-for-platforms"
+  - "*edit-video-for-track"
+  - "*plan-content-strategy"
+  - "*publish-to-channels"
+
+trigger_threshold: 1
+typical_duration: "30-90 minutes"
+
+success_indicators:
+  - "Brief criativo aprovado"
+  - "Master e stems exportados"
+  - "Conteúdo adaptado por plataforma"
+  - "Vídeos e metadados prontos"
+  - "Publicação ou agendamento concluído"
+
+transitions:
+  brief_complete:
+    trigger: "creative brief generated"
+    confidence: 0.90
+    greeting_message: "Brief pronto. Iniciando composição."
+    next_steps:
+      - command: "*compose-track"
+        description: "Compõe a faixa"
+        priority: 1
+  composition_complete:
+    trigger: "composition spec generated"
+    confidence: 0.90
+    greeting_message: "Composição pronta. Iniciando produção."
+    next_steps:
+      - command: "*produce-and-mix"
+        description: "Produz e mixa"
+        priority: 1
+  mix_complete:
+    trigger: "mix pre-master generated"
+    confidence: 0.90
+    greeting_message: "Mix pronto. Iniciando masterização."
+    next_steps:
+      - command: "*master-and-export-stems"
+        description: "Masteriza e exporta"
+        priority: 1
+  master_complete:
+    trigger: "master and stems exported"
+    confidence: 0.90
+    greeting_message: "Master pronto. Adaptação, vídeo e estratégia."
+    next_steps:
+      - command: "*adapt-for-platforms"
+        description: "Adapta por plataforma"
+        priority: 1
+      - command: "*edit-video-for-track"
+        description: "Gera vídeos"
+        priority: 1
+      - command: "*plan-content-strategy"
+        description: "Planeja metadados"
+        priority: 1
+  publish_ready:
+    trigger: "adapted content, video and metadata ready"
+    confidence: 0.85
+    greeting_message: "Inputs prontos. Iniciando publicação."
+    next_steps:
+      - command: "*publish-to-channels"
+        description: "Publica nos canais"
+        priority: 1
+  publish_complete:
+    trigger: "publish report generated"
+    confidence: 0.95
+    greeting_message: "Publicação concluída."
+    next_steps: []

@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://congnittusai.github.io/paraguay-shopping-search/catalog/schema.json",
+  "title": "CatalogProduct",
+  "description": "Schema unificado do catálogo — site de buscas de compras do Paraguai. Moeda PYG, locale es-PY.",
+  "type": "object",
+  "required": ["id", "title", "price_pyg", "store", "url", "source", "locale"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Identificador único do item no catálogo (ex.: hash ou id da fonte + id externo)"
+    },
+    "title": {
+      "type": "string",
+      "description": "Título do produto (es-PY)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Descrição opcional do produto (es-PY)"
+    },
+    "price_pyg": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Precio en guaraníes (PYG)"
+    },
+    "store": {
+      "type": "string",
+      "description": "Nombre de la tienda o fuente"
+    },
+    "store_id": {
+      "type": "string",
+      "description": "Identificador interno de la tienda (opcional)"
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL del producto en la tienda de origen (para afiliados)"
+    },
+    "image_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL de la imagen principal del producto"
+    },
+    "category": {
+      "type": "string",
+      "description": "Categoría del producto (es-PY, normalizada)"
+    },
+    "source": {
+      "type": "string",
+      "description": "Fuente de datos (ej.: compras-paraguay)"
+    },
+    "source_id": {
+      "type": "string",
+      "description": "ID del item en la fuente original"
+    },
+    "locale": {
+      "type": "string",
+      "const": "es-PY",
+      "description": "Locale fijo para Paraguay"
+    },
+    "currency": {
+      "type": "string",
+      "const": "PYG",
+      "description": "Moneda fija: guaraní paraguayo"
+    },
+    "ingested_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Fecha/hora de ingestión (ISO 8601)"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Última actualización del registro (ISO 8601)"
+    }
+  },
+  "additionalProperties": false
+}

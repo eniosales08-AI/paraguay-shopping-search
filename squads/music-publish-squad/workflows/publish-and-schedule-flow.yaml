@@ -1,0 +1,44 @@
+# Workflow: publish_and_schedule_flow (Coordinator pattern)
+# Publicação e agendamento em canais (YouTube, TikTok, Instagram)
+
+workflow_name: publish_and_schedule_flow
+description: "Publicação e agendamento de conteúdo nos canais — consome adaptedContent, videoAssets e publishMetadata"
+
+pattern: "Coordinator"
+
+agent_sequence:
+  - platform-adapter
+  - video-editor
+  - content-strategist
+  - publisher
+
+key_commands:
+  - "*adapt-for-platforms"
+  - "*edit-video-for-track"
+  - "*plan-content-strategy"
+  - "*publish-to-channels"
+
+trigger_threshold: 1
+typical_duration: "10-25 minutes"
+
+success_indicators:
+  - "Conteúdo adaptado por plataforma disponível"
+  - "Vídeos e thumbnails disponíveis"
+  - "Metadados (títulos, descrições, hashtags) disponíveis"
+  - "Upload ou agendamento executado; publishReport com links e status"
+
+transitions:
+  inputs_ready:
+    trigger: "adapted content, video assets and publish metadata available"
+    confidence: 0.90
+    greeting_message: "Inputs prontos. Iniciando publicação nos canais."
+    next_steps:
+      - command: "*publish-to-channels"
+        description: "Publica ou agenda em YouTube, TikTok, Instagram"
+        priority: 1
+
+  publish_complete:
+    trigger: "publish report generated with status per channel"
+    confidence: 0.95
+    greeting_message: "Publicação concluída."
+    next_steps: []

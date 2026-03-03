@@ -1,0 +1,48 @@
+workflow_name: design_and_seo_to_frontend
+description: "Design system e SEO em paralelo, depois implementação do front-end"
+
+pattern: "Fan-Out and Converge"
+
+agent_sequence:
+  - ux-designer
+  - seo-specialist
+  - frontend-engineer
+
+key_commands:
+  - "*design-ui-system"
+  - "*plan-seo-localization"
+  - "*implement-frontend"
+
+trigger_threshold: 1
+typical_duration: "variável"
+
+success_indicators:
+  - "Design system e specs de UI disponíveis"
+  - "SEO e localização es-PY PYG planejados"
+  - "Front-end implementado integrando design, API e SEO"
+
+transitions:
+  vision_ready:
+    trigger: "product vision available"
+    confidence: 0.85
+    greeting_message: "Visão disponível. Iniciando design e SEO em paralelo."
+    next_steps:
+      - command: "*design-ui-system"
+        description: "Define design system"
+        priority: 1
+      - command: "*plan-seo-localization"
+        description: "Planeja SEO e localização"
+        priority: 1
+  design_and_seo_complete:
+    trigger: "design system and seo spec available and api spec available"
+    confidence: 0.90
+    greeting_message: "Design e SEO prontos. Iniciando implementação do front-end."
+    next_steps:
+      - command: "*implement-frontend"
+        description: "Implementa o site"
+        priority: 1
+  frontend_complete:
+    trigger: "frontend build ref available"
+    confidence: 0.95
+    greeting_message: "Front-end pronto. Próximo deploy e QA."
+    next_steps: []

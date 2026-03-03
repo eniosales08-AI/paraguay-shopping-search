@@ -1,0 +1,40 @@
+workflow_name: platform_adaptation_flow
+description: "Adaptação de formatos por plataforma (YouTube, TikTok, Instagram)"
+
+pattern: "Sequential"
+
+agent_sequence:
+  - mastering-engineer
+  - platform-adapter
+  - publisher
+
+key_commands:
+  - "*master-and-export-stems"
+  - "*adapt-for-platforms"
+  - "*publish-to-channels"
+
+trigger_threshold: 1
+typical_duration: "5-15 minutes"
+
+success_indicators:
+  - "Master e stems disponíveis"
+  - "Conteúdo adaptado por plataforma"
+  - "Publisher recebe adaptedContent"
+
+transitions:
+  master_ready:
+    trigger: "master and stems exported"
+    confidence: 0.90
+    greeting_message: "Master pronto. Iniciando adaptação."
+    next_steps:
+      - command: "*adapt-for-platforms"
+        description: "Adapta às specs das plataformas"
+        priority: 1
+  adaptation_complete:
+    trigger: "adapted content ready"
+    confidence: 0.90
+    greeting_message: "Adaptação pronta. Iniciando publicação."
+    next_steps:
+      - command: "*publish-to-channels"
+        description: "Publica nos canais"
+        priority: 1

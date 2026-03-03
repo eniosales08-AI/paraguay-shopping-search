@@ -1,0 +1,56 @@
+workflow_name: data_to_search_to_api
+description: "Pipeline de dados: visão, ingestão, catálogo, motor de busca, API backend"
+
+pattern: "Sequential"
+
+agent_sequence:
+  - product-owner
+  - data-engineer
+  - search-engineer
+  - backend-engineer
+
+key_commands:
+  - "*define-product-vision"
+  - "*ingest-and-normalize-catalog"
+  - "*build-search-engine"
+  - "*build-backend-api"
+
+trigger_threshold: 1
+typical_duration: "variável (ingestão e indexação)"
+
+success_indicators:
+  - "Visão e compliance documentados"
+  - "Catálogo normalizado disponível (schema + dados)"
+  - "Motor de busca indexado e contrato definido"
+  - "API backend documentada e acessível"
+
+transitions:
+  vision_complete:
+    trigger: "product vision and compliance generated"
+    confidence: 0.90
+    greeting_message: "Visão pronta. Iniciando ingestão e normalização do catálogo."
+    next_steps:
+      - command: "*ingest-and-normalize-catalog"
+        description: "Ingere e normaliza dados"
+        priority: 1
+  catalog_complete:
+    trigger: "catalog schema and data ref available"
+    confidence: 0.90
+    greeting_message: "Catálogo pronto. Iniciando motor de busca."
+    next_steps:
+      - command: "*build-search-engine"
+        description: "Constrói índice e contrato de busca"
+        priority: 1
+  search_complete:
+    trigger: "search contract and index ref available"
+    confidence: 0.90
+    greeting_message: "Busca pronta. Iniciando API backend."
+    next_steps:
+      - command: "*build-backend-api"
+        description: "Expõe API para o front-end"
+        priority: 1
+  api_complete:
+    trigger: "API spec and endpoint ref available"
+    confidence: 0.95
+    greeting_message: "API pronta. Próximo: design, SEO e front-end."
+    next_steps: []
