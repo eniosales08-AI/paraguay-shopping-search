@@ -1,6 +1,5 @@
 import { NextRequest } from "next/server";
-import { readFileSync } from "fs";
-import { join } from "path";
+import catalogData from "@/data/catalog/products.json";
 
 export const dynamic = "force-dynamic";
 
@@ -21,15 +20,9 @@ const FALLBACK_PRODUCTS: Product[] = [
   { id: "1", title: "Producto de ejemplo", description: null, price_pyg: 100000, store: "Demo", url: "https://example.com/1", image_url: null, category: "General", locale: "es-PY", currency: "PYG" },
 ];
 
-function loadCatalog(): Product[] {
-  try {
-    const path = join(process.cwd(), "data", "catalog", "products.json");
-    const raw = readFileSync(path, "utf-8");
-    const data = JSON.parse(raw);
-    return Array.isArray(data) ? data : FALLBACK_PRODUCTS;
-  } catch {
-    return FALLBACK_PRODUCTS;
-  }
+function getCatalog(): Product[] {
+  const data = catalogData as unknown;
+  return Array.isArray(data) ? (data as Product[]) : FALLBACK_PRODUCTS;
 }
 
 function filterAndSort(
@@ -77,7 +70,7 @@ export async function GET(request: NextRequest) {
     const store = searchParams.get("store") ?? "";
     const sort = searchParams.get("sort") ?? "relevance";
 
-    const catalog = loadCatalog();
+    const catalog = getCatalog();
     const filtered = filterAndSort(catalog, q, category, store, sort);
     const total = filtered.length;
     const start = (page - 1) * limit;
