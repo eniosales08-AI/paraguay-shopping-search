@@ -1,44 +1,113 @@
-import { NextRequest, NextResponse } from "next/server";
-import path from "path";
+import { NextRequest } from "next/server";
+import { readFileSync } from "fs";
+import { join } from "path";
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const q = searchParams.get("q") || "";
-  const category = searchParams.get("category") || undefined;
-  const store = searchParams.get("store") || undefined;
-  const price_min = searchParams.get("price_min");
-  const price_max = searchParams.get("price_max");
-  const sort = searchParams.get("sort") || "relevance";
-  const page = parseInt(searchParams.get("page") || "1", 10);
-  const limit = parseInt(searchParams.get("limit") || "20", 10);
+export const dynamic = "force-dynamic";
 
-  const params: Record<string, unknown> = {
-    q,
-    category,
-    store,
-    sort,
+type Product = {
+  id: string;
+  title: string;
+  description: string | null;
+  price_pyg: number;
+  store: string;
+  url: string;
+  image_url: string | null;
+  category: string | null;
+  locale: string;
+  currency: string;
+};
+
+const FALLBACK_PRODUCTS: Product[] = [
+  { id: "1", title: "Producto de ejemplo", description: null, price_pyg: 100000, store: "Demo", url: "https://example.com/1", image_url: null, category: "General", locale: "es-PY", currency: "PYG" },
+];
+
+function loadCatalog(): Product[] {
+  try {
+    const path = join(process.cwd(), "data", "catalog", "products.json");
+    const raw = readFileSync(path, "utf-8");
+    const data = JSON.parse(raw);
+    return Array.isArray(data) ? data : FALLBACK_PRODUCTS;
+  } catch {
+    return FALLBACK_PRODUCTS;
+  }
+}
+
+function filterAndSort(
+  items: Product[],
+  q: string,
+  category: string,
+  store: string,
+  sort: string
+): Product[] {
+  let out = [...items];
+  if (q) {
+    const lower = q.toLowerCase();
+    out = out.filter(
+      (p) =>
+        p.title.toLowerCase().includes(lower) ||
+        (p.description && p.description.toLowerCase().includes(lower)) ||
+        (p.category && p.category.toLowerCase().includes(lower)) ||
+        p.store.toLowerCase().includes(lower)
+    );
+  }
+  if (category) out = out.filter((p) => p.category === category);
+  if (store) out = out.filter((p) => p.store === store);
+  if (sort === "price_asc") out.sort((a, b) => a.price_pyg - b.price_pyg);
+  else if (sort === "price_desc") out.sort((a, b) => b.price_pyg - a.price_pyg);
+  return out;
+}
+
+function emptyResponse(page: number, limit: number) {
+  return Response.json({
+    results: [],
+    total: 0,
     page,
     limit,
-  };
-  if (price_min != null && price_min !== "") params.price_min = Number(price_min);
-  if (price_max != null && price_max !== "") params.price_max = Number(price_max);
+    facets: { categories: [], stores: [], price_range: { min: 0, max: 0 } },
+  });
+}
 
-  const cwd = process.cwd();
-  const searchPaths = [
-    path.join(cwd, "data", "search", "search.js"),
-    path.join(cwd, "..", "data", "search", "search.js"),
-  ];
-  for (const searchPath of searchPaths) {
-    try {
-      const { search } = require(searchPath);
-      const result = search(params);
-      return NextResponse.json(result);
-    } catch {
-      continue;
+export async function GET(request: NextRequest) {
+  try {
+    const searchParams = request.nextUrl.searchParams;
+    const q = searchParams.get("q") ?? "";
+    const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
+    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") ?? "20", 10)));
+    const category = searchParams.get("category") ?? "";
+    const store = searchParams.get("store") ?? "";
+    const sort = searchParams.get("sort") ?? "relevance";
+
+    const catalog = loadCatalog();
+    const filtered = filterAndSort(catalog, q, category, store, sort);
+    const total = filtered.length;
+    const start = (page - 1) * limit;
+    const results = filtered.slice(start, start + limit);
+
+    const categoryCount = new Map<string, number>();
+    const storeCount = new Map<string, number>();
+    for (const p of filtered) {
+      if (p.category) categoryCount.set(p.category, (categoryCount.get(p.category) ?? 0) + 1);
+      storeCount.set(p.store, (storeCount.get(p.store) ?? 0) + 1);
     }
+    const categories = [...categoryCount.entries()].map(([value, count]) => ({ value, count }));
+    const stores = [...storeCount.entries()].map(([value, count]) => ({ value, count }));
+
+    const priceValues = filtered.map((p) => p.price_pyg).filter((n) => n > 0);
+    const price_range = {
+      min: priceValues.length ? Math.min(...priceValues) : 0,
+      max: priceValues.length ? Math.max(...priceValues) : 0,
+    };
+
+    return Response.json({
+      results,
+      total,
+      page,
+      limit,
+      facets: { categories, stores, price_range },
+    });
+  } catch {
+    const page = Math.max(1, parseInt(request.nextUrl.searchParams.get("page") ?? "1", 10));
+    const limit = Math.min(50, Math.max(1, parseInt(request.nextUrl.searchParams.get("limit") ?? "20", 10)));
+    return emptyResponse(page, limit);
   }
-  return NextResponse.json(
-    { error: "Search service unavailable." },
-    { status: 503 }
-  );
 }

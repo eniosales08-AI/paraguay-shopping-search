@@ -1,9 +1,9 @@
 "use client";
 
-import { useSearchParams, usePathname } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { getTranslations, isValidLocale, type Locale } from "@/lib/i18n";
+import { getTranslations, type Locale } from "@/lib/i18n";
 
 type Product = {
   id: string;
@@ -23,11 +23,17 @@ type SearchResponse = {
   total: number;
   page: number;
   limit: number;
-  facets: {
-    categories: { value: string; count: number }[];
-    stores: { value: string; count: number }[];
-    price_range: { min: number; max: number };
+  facets?: {
+    categories?: { value: string; count: number }[];
+    stores?: { value: string; count: number }[];
+    price_range?: { min: number; max: number };
   };
+};
+
+const DEFAULT_FACETS = {
+  categories: [] as { value: string; count: number }[],
+  stores: [] as { value: string; count: number }[],
+  price_range: { min: 0, max: 0 },
 };
 
 function formatPrice(pyg: number, suffix: string): string {
@@ -39,7 +45,6 @@ function formatPrice(pyg: number, suffix: string): string {
 
 function Resultados({ locale }: { locale: Locale }) {
   const searchParams = useSearchParams();
-  const pathname = usePathname();
   const q = searchParams.get("q") || "";
   const page = parseInt(searchParams.get("page") || "1", 10);
   const category = searchParams.get("category") || "";
@@ -64,7 +69,25 @@ function Resultados({ locale }: { locale: Locale }) {
     setLoading(true);
     fetch(`/api/search?${params}`)
       .then((res) => res.json())
-      .then(setData)
+      .then((json) => {
+        if (json?.error || !Array.isArray(json?.results)) {
+          setData(null);
+          return;
+        }
+        const rawFacets = json.facets ?? null;
+        const facets = rawFacets && typeof rawFacets === "object" ? rawFacets : {};
+        setData({
+          results: json.results ?? [],
+          total: typeof json.total === "number" ? json.total : 0,
+          page: typeof json.page === "number" ? json.page : 1,
+          limit: typeof json.limit === "number" ? json.limit : 20,
+          facets: {
+            categories: Array.isArray(facets?.categories) ? facets.categories : DEFAULT_FACETS.categories,
+            stores: Array.isArray(facets?.stores) ? facets.stores : DEFAULT_FACETS.stores,
+            price_range: facets?.price_range && typeof facets.price_range.min === "number" ? facets.price_range : DEFAULT_FACETS.price_range,
+          },
+        });
+      })
       .catch(() => setData(null))
       .finally(() => setLoading(false));
   }, [q, page, category, store, sort]);
@@ -85,7 +108,11 @@ function Resultados({ locale }: { locale: Locale }) {
     );
   }
 
-  const { results, total, facets } = data;
+  const results = data.results ?? [];
+  const total = typeof data.total === "number" ? data.total : 0;
+  const facets = data.facets && typeof data.facets === "object" ? data.facets : DEFAULT_FACETS;
+  const categories = Array.isArray(facets?.categories) ? facets.categories : [];
+  const stores = Array.isArray(facets?.stores) ? facets.stores : [];
   const totalPages = Math.ceil(total / 20);
 
   function buildUrl(updates: Record<string, string>) {
@@ -124,12 +151,12 @@ function Resultados({ locale }: { locale: Locale }) {
               ))}
             </select>
           </div>
-          {facets.categories.length > 0 && (
+          {categories.length > 0 && (
             <div>
               <h3 className="text-sm font-semibold text-[var(--color-text)] mb-2">{t.categoryLabel}</h3>
               <ul className="space-y-1">
                 {!category && <li className="text-[var(--color-text-muted)] text-sm">{t.categoryAll}</li>}
-                {facets.categories.map((f) => (
+                {categories.map((f) => (
                   <li key={f.value}>
                     <Link
                       href={buildUrl({ category: category === f.value ? "" : f.value })}
@@ -142,12 +169,12 @@ function Resultados({ locale }: { locale: Locale }) {
               </ul>
             </div>
           )}
-          {facets.stores.length > 0 && (
+          {stores.length > 0 && (
             <div>
               <h3 className="text-sm font-semibold text-[var(--color-text)] mb-2">{t.storeLabel}</h3>
               <ul className="space-y-1">
                 {!store && <li className="text-[var(--color-text-muted)] text-sm">{t.storeAll}</li>}
-                {facets.stores.map((f) => (
+                {stores.map((f) => (
                   <li key={f.value}>
                     <Link
                       href={buildUrl({ store: store === f.value ? "" : f.value })}
@@ -163,12 +190,17 @@ function Resultados({ locale }: { locale: Locale }) {
         </aside>
 
         <div className="flex-1 min-w-0">
-          <p className="text-[var(--color-text-muted)] mb-6">
+          <p className="text-[var(--color-text-muted)] mb-6" aria-live="polite">
             {total} {t.resultsCount}
             {q && ` ${t.resultsFor} "${q}"`}
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {results.length === 0 ? (
+            <p className="py-12 text-center text-[var(--color-text-muted)]" role="status">
+              {t.noResults}
+            </p>
+          ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" role="list" aria-label={t.resultsCount}>
             {results.map((p) => (
               <a
                 key={p.id}
@@ -179,6 +211,7 @@ function Resultados({ locale }: { locale: Locale }) {
               >
                 <div className="aspect-square bg-[var(--color-border)] rounded-lg mb-3 overflow-hidden">
                   {p.image_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- external product URLs
                     <img src={p.image_url} alt="" className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-[var(--color-text-muted)] text-sm">
@@ -194,6 +227,7 @@ function Resultados({ locale }: { locale: Locale }) {
               </a>
             ))}
           </div>
+          )}
 
           {totalPages > 1 && (
             <nav className="mt-8 flex justify-center gap-2">
