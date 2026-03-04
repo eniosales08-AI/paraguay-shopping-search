@@ -84,3 +84,11 @@ Metadata:
 ## Descrição
 
 Terceira task do pipeline. Constrói o motor de busca sobre o catálogo; produz contrato de queries/filtros e referência ao índice. Saída consumível por buildBackendApi().
+
+---
+
+## Implementação (Congnittusai)
+
+- **Contrato:** `docs/search-contract.md`; API expõe `/api/search` com o contrato.
+- **Motor atual:** busca em memória em `frontend/lib/catalog-search.ts` (função `search()`). Catálogo vem de `frontend/data/catalog/products.json` (importado no build).
+- **Próximo passo (índice externo):** ver `docs/PROXIMO-INDICE-BUSCA.md`. Trocar a implementação de `search()` por cliente Meilisearch/PostgreSQL FTS mantendo o mesmo contrato.

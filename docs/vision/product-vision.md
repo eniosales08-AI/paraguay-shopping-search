@@ -6,7 +6,16 @@
 
 ---
 
-## 1. Objetivo
+## Objetivo final (north star)
+
+**Ser el sitio de referencia de búsqueda de compras en Paraguay:** un único lugar donde la persona encuentra ofertas de varias tiendas, con búsqueda por texto, filtros (categoría, tienda, precio), precios en PYG, experiencia en español (es-PY) y opcionalmente en portugués, rápido y confiable, sin checkout en el sitio — solo búsqueda, comparación y enlace a la tienda. El catálogo se alimenta de fuentes permitidas (APIs, feeds, compliance) y la operación (precios, cambio, contenido) es sostenible vía los squads paraguay-shopping-search y compras-paraguai-ops.
+
+*Resumen en una frase:* un “Google de compras” para Paraguay: buscar, filtrar, comparar precios en PYG e ir a comprar a la tienda.  
+*Doc dedicado:* `docs/OBJETIVO-FINAL.md`.
+
+---
+
+## 1. Objetivo (alcance actual)
 
 Construir el mejor sitio de **búsqueda de compras para el mercado paraguayo**: agregar ofertas de productos, exponer búsqueda por texto, categoría, tienda y precio, y ofrecer una experiencia rápida, clara y en español (es-PY), con precios en PYG.
 
@@ -39,7 +48,12 @@ Construir el mejor sitio de **búsqueda de compras para el mercado paraguayo**: 
 - No almacenar datos personales de usuarios en el catálogo; solo productos, precios, tiendas, URLs.
 - Documentar en este repo las fuentes utilizadas y la fecha de última actualización cuando haya ingestión real.
 
-## 6. Metadatos de la visión
+## 6. Catálogo en v1 (decisión)
+
+- **v1 (actual):** catálogo **embutido** en `frontend/app/api/search/route.ts` (6 productos). No se lee archivo en producción (Vercel serverless). Ver `docs/decisao-catalogo-v1.md`.
+- **Al escalar:** definir fuente de verdad (JSON/DB/ingesta) y ejecutar ingest-and-normalize-catalog (P3.1) y, si aplica, build-search-engine (P3.2).
+
+## 7. Metadatos de la visión
 
 - **Autor:** Congnittusai (squad paraguay-shopping-search).
 - **Destinatarios:** Data Engineer, Search Engineer, Backend Engineer, Frontend Engineer, SEO, DevOps, QA.

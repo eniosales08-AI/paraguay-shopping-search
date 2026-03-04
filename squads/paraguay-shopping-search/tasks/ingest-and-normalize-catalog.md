@@ -80,3 +80,10 @@ Metadata:
 ## Descrição
 
 Segunda task do pipeline. Desenha ou executa o pipeline de ingestão a partir da visão; normaliza dados e produz schema e referência ao catálogo. Saída consumível por buildSearchEngine() e buildBackendApi().
+
+---
+
+## Implementação (Congnittusai)
+
+- **Fonte de verdade:** `frontend/data/catalog/products.json` — schema em `data/catalog/catalog-schema.json`.
+- **API:** `frontend/app/api/search/route.ts` importa o JSON no build (funciona na Vercel). Para atualizar o catálogo: editar o JSON e redeploy. Próximo passo (fontes externas): pipeline que gera/atualiza esse JSON (compras-paraguai-ops maintain-catalog).

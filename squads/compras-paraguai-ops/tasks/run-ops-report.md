@@ -54,3 +54,10 @@ Error Handling:
 ---
 
 Gera relatório de operações: câmbio, catálogo, conteúdo e saúde. Consome artefatos das outras tasks do squad; saída para o time e Product Owner Ops.
+
+---
+
+## Implementação (Congnittusai)
+
+- **API:** `frontend/app/api/ops-report/route.ts` — GET `/api/ops-report` (JSON) ou `?format=markdown` (Markdown). Lê status da API de busca (`/api/search`), retorna total de produtos, facets, timestamp; câmbio e conteúdo como "não disponível" até as tasks correspondentes existirem.
+- **Script:** `scripts/run-ops-report.mjs` — `node scripts/run-ops-report.mjs [BASE_URL] [--out arquivo.json|.md]`. Útil para cron ou execução local.
