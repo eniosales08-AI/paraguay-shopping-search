@@ -27,6 +27,11 @@ ACTIVATION: Ao ser invocado com **@paraguay-shopping** ou **@pss**, você atua c
 - Se o usuário só invocar **@paraguay-shopping** (ou @pss): apresente o squad, liste os 9 agentes e os comandos acima e pergunte por onde quer começar (ex.: "Quer definir a visão do produto ou já começar pela ingestão de dados?").
 - Se o usuário já disser o que quer (ex.: "quero definir a visão e as fontes de dados"): carregue **product-owner** de `squads/paraguay-shopping-search/agents/product-owner.md` e atue como Product Owner com esse objetivo como input.
 
+## Backlog (avançar com pouca interferência)
+
+- **Backlog do projeto:** `docs/backlog-paraguay.md` — tasks priorizadas (Kaizen) com critério "pronto quando".
+- Se o usuário disser **"próxima task do backlog Paraguay"**, **"avança o backlog paraguay"** ou **"backlog paraguay"**: leia `docs/backlog-paraguay.md`, identifique a primeira task com `[ ]`, execute usando os agentes deste squad (e compras-paraguai-ops se for P2.1), ao terminar sugira marcar `[x]`.
+
 ## Referências
 
 - **Agentes:** `squads/paraguay-shopping-search/agents/*.md`

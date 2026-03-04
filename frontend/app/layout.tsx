@@ -1,41 +1,44 @@
 import type { Metadata } from "next";
-import { Inter, Syne } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const syne = Syne({ subsets: ["latin"], variable: "--font-syne" });
-
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
-  title: "Comparador de preços Paraguai — Ofertas e preços em Gs",
-  description:
-    "Pesquise ofertas e compare preços no Paraguai. Português, español, English, Avañe'ẽ. Electrónica, celulares e mais.",
-  openGraph: { type: "website" },
+  title: { default: "Compras Paraguay — Busca de productos", template: "%s | Compras Paraguay" },
+  description: "Buscá productos y compará precios en Paraguay. Precios en Gs. (PYG).",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://compras-paraguay.example.com"),
+  openGraph: { locale: "es_PY", type: "website" },
+};
+
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://compras-paraguay.example.com";
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Compras Paraguay",
+  description: "Buscá productos y compará precios en Paraguay.",
+  url: baseUrl,
+  potentialAction: {
+    "@type": "SearchAction",
+    target: { "@type": "EntryPoint", urlTemplate: `${baseUrl}/es/buscar?q={search_term}` },
+    "query-input": "required name=search_term",
+  },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "Paraguay Shopping Search",
-    url: siteUrl,
-    inLanguage: ["pt-BR", "es-PY", "en", "gn"],
-    potentialAction: {
-      "@type": "SearchAction",
-      target: { "@type": "EntryPoint", urlTemplate: `${siteUrl}/pt/buscar?q={search_term_string}` },
-      "query-input": "required name=search_term_string",
-    },
-  };
-
+}) {
   return (
-    <html lang="pt-BR" className={`${inter.variable} ${syne.variable}`}>
-      <body className="min-h-screen font-sans">
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+    <html lang="es">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
+      </head>
+      <body className="antialiased min-h-screen">
+        <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg">
+          Saltar al contenido
+        </a>
         {children}
       </body>
     </html>

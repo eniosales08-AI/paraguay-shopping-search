@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CatalogProduct",
+  "description": "Schema unificado de producto para Compras Paraguay. Moeda PYG, locale es-PY.",
+  "type": "object",
+  "required": ["id", "title", "price_pyg", "store", "url", "locale", "currency"],
+  "properties": {
+    "id": { "type": "string", "description": "Identificador único do produto" },
+    "title": { "type": "string", "description": "Título do produto" },
+    "description": { "type": ["string", "null"], "description": "Descrição opcional" },
+    "price_pyg": { "type": "number", "minimum": 0, "description": "Preço em guaranis (PYG)" },
+    "store": { "type": "string", "description": "Nome da loja" },
+    "url": { "type": "string", "format": "uri", "description": "URL do produto na loja" },
+    "image_url": { "type": ["string", "null"], "format": "uri", "description": "URL da imagem" },
+    "category": { "type": ["string", "null"], "description": "Categoria do produto" },
+    "locale": { "type": "string", "enum": ["es-PY"], "description": "Locale do conteúdo" },
+    "currency": { "type": "string", "enum": ["PYG"], "description": "Moeda" }
+  }
+}

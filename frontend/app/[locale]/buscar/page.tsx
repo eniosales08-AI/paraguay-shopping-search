@@ -1,33 +1,35 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { isValidLocale, getTranslations, type Locale } from "@/lib/i18n";
-import BuscarPageClient from "./BuscarClient";
 import { Suspense } from "react";
+import { getLocale, getTranslations } from "@/lib/i18n";
+import BuscarPageClient from "./BuscarClient";
 
-type Props = { params: Promise<{ locale: string }>; searchParams: Promise<{ q?: string }> };
-
-export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const { locale } = await params;
-  if (!isValidLocale(locale)) return {};
-  const p = await searchParams;
-  const q = p?.q?.trim() || "";
-  const t = getTranslations(locale as Locale);
+  const l = getLocale(locale);
+  const t = getTranslations(l);
   return {
-    title: q ? `${q} — ${t.homeTitle}` : t.homeTitle,
-    description: q
-      ? `${t.resultsCount} ${t.resultsFor} ${q}.`
-      : t.homeSubtitle,
+    title: `${t.searchButton} — ${t.siteTitle}`,
+    description: t.siteTagline,
+    openGraph: { locale: l === "es" ? "es_PY" : "pt_BR", type: "website" },
   };
 }
 
-export default async function BuscarPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function BuscarPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const { locale } = await params;
-  if (!isValidLocale(locale)) notFound();
+  const l = getLocale(locale);
+  const t = getTranslations(l);
 
   return (
-    <main className="min-h-screen px-6 py-8 max-w-7xl mx-auto">
-      <Suspense fallback={<div className="py-12 text-center">...</div>}>
-        <BuscarPageClient locale={locale as Locale} />
+    <main id="main" className="max-w-6xl mx-auto px-4 py-8" role="main">
+      <Suspense fallback={<div className="py-12 text-center text-[var(--color-text-muted)]">{t.loading}</div>}>
+        <BuscarPageClient locale={l} />
       </Suspense>
     </main>
   );

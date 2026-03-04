@@ -1,0 +1,26 @@
+name: pricing-and-catalog-ops
+description: "Pipeline de preços e catálogo — câmbio → normalização → manutenção"
+version: "1.0"
+
+steps:
+  - id: update-exchange-rates
+    task: update-exchange-rates.md
+    agent: pricing-analyst
+    output: exchangeRates
+  - id: normalize-prices
+    task: normalize-prices.md
+    agent: pricing-analyst
+    input:
+      exchangeRates: "#update-exchange-rates.exchangeRates"
+      catalogInput: "catalogInput"  # fornecido externamente ou do último maintain-catalog
+    output: catalogNormalized
+  - id: maintain-catalog
+    task: maintain-catalog.md
+    agent: catalog-manager
+    input:
+      catalogNormalized: "#normalize-prices.catalogNormalized"
+    output: catalogUpdated
+
+outputs:
+  catalogUpdated: "#maintain-catalog.catalogUpdated"
+  exchangeRates: "#update-exchange-rates.exchangeRates"

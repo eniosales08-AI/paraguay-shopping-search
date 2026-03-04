@@ -1,0 +1,53 @@
+name: compras-paraguai-ops
+version: 1.0.0
+description: "Squad de operações para Compras Paraguai — preços, câmbio, catálogo e conteúdo. Complementa paraguay-shopping-search. Congnittusai."
+author: Congnittusai
+license: MIT
+slashPrefix: cpo
+
+aios:
+  minVersion: "2.1.0"
+  type: squad
+
+components:
+  agents:
+    - product-owner-ops.md
+    - pricing-analyst.md
+    - catalog-manager.md
+    - content-editor.md
+    - data-ops.md
+  tasks:
+    - update-exchange-rates.md
+    - normalize-prices.md
+    - maintain-catalog.md
+    - sync-content.md
+    - run-ops-report.md
+  workflows:
+    - pricing-and-catalog-ops.yaml
+    - content-and-reporting.yaml
+  checklists: []
+  templates: []
+  tools: []
+  scripts: []
+
+config:
+  extends: none
+  coding-standards: config/coding-standards.md
+  tech-stack: config/tech-stack.md
+  source-tree: config/source-tree.md
+
+dependencies:
+  node: []
+  squads:
+    - paraguay-shopping-search
+
+tags:
+  - ecommerce
+  - paraguay
+  - compras
+  - operations
+  - pricing
+  - catalog
+  - aios
+  - multi-agent
+  - congnittusai

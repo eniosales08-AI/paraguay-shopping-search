@@ -1,0 +1,21 @@
+name: content-and-reporting
+description: "Conteúdo editorial e relatório de operações"
+version: "1.0"
+
+steps:
+  - id: sync-content
+    task: sync-content.md
+    agent: content-editor
+    output: contentArtifacts
+  - id: run-ops-report
+    task: run-ops-report.md
+    agent: data-ops
+    input:
+      exchangeRates: "exchangeRates"  # opcional, do pipeline pricing-and-catalog-ops
+      catalogUpdated: "catalogUpdated"  # opcional
+      contentArtifacts: "#sync-content.contentArtifacts"
+    output: opsReport
+
+outputs:
+  contentArtifacts: "#sync-content.contentArtifacts"
+  opsReport: "#run-ops-report.opsReport"

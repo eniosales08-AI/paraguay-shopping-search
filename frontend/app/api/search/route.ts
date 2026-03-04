@@ -1,5 +1,4 @@
 import { NextRequest } from "next/server";
-import catalogData from "@/data/catalog/products.json";
 
 export const dynamic = "force-dynamic";
 
@@ -16,14 +15,15 @@ type Product = {
   currency: string;
 };
 
-const FALLBACK_PRODUCTS: Product[] = [
-  { id: "1", title: "Producto de ejemplo", description: null, price_pyg: 100000, store: "Demo", url: "https://example.com/1", image_url: null, category: "General", locale: "es-PY", currency: "PYG" },
+// Catálogo embutido para funcionar na Vercel (sem depender de arquivo ou import JSON)
+const CATALOG: Product[] = [
+  { id: "1", title: "Auriculares inalámbricos Bluetooth", description: "Auriculares con cancelación de ruido, batería 20h.", price_pyg: 185000, store: "Electro Paraguay", url: "https://example.com/1", image_url: "https://picsum.photos/seed/auriculares/400/400", category: "Electrónica", locale: "es-PY", currency: "PYG" },
+  { id: "2", title: "Cargador rápido 20W", description: null, price_pyg: 45000, store: "Electro Paraguay", url: "https://example.com/2", image_url: "https://picsum.photos/seed/cargador/400/400", category: "Electrónica", locale: "es-PY", currency: "PYG" },
+  { id: "3", title: "Silla de oficina ergonómica", description: "Respaldo alto, reposabrazos.", price_pyg: 320000, store: "Muebles Py", url: "https://example.com/3", image_url: "https://picsum.photos/seed/silla/400/400", category: "Hogar", locale: "es-PY", currency: "PYG" },
+  { id: "4", title: "Notebook 8GB RAM 256GB", description: "Procesador moderno, pantalla Full HD.", price_pyg: 1850000, store: "TecnoStore", url: "https://example.com/4", image_url: "https://picsum.photos/seed/notebook/400/400", category: "Electrónica", locale: "es-PY", currency: "PYG" },
+  { id: "5", title: "Mesa de escritorio 1.20m", description: null, price_pyg: 280000, store: "Muebles Py", url: "https://example.com/5", image_url: "https://picsum.photos/seed/mesa/400/400", category: "Hogar", locale: "es-PY", currency: "PYG" },
+  { id: "6", title: "Smartwatch deportivo", description: "Resistente al agua, GPS, pulsómetro.", price_pyg: 420000, store: "TecnoStore", url: "https://example.com/6", image_url: "https://picsum.photos/seed/smartwatch/400/400", category: "Electrónica", locale: "es-PY", currency: "PYG" },
 ];
-
-function getCatalog(): Product[] {
-  const data = catalogData as unknown;
-  return Array.isArray(data) ? (data as Product[]) : FALLBACK_PRODUCTS;
-}
 
 function filterAndSort(
   items: Product[],
@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
     const store = searchParams.get("store") ?? "";
     const sort = searchParams.get("sort") ?? "relevance";
 
-    const catalog = getCatalog();
+    const catalog = CATALOG;
     const filtered = filterAndSort(catalog, q, category, store, sort);
     const total = filtered.length;
     const start = (page - 1) * limit;
